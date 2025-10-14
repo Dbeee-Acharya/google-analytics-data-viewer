@@ -6,3 +6,4 @@ build
 dist-ssr
 *.local
 pnpm-debug.log*
+ekantipur-web-*.json
