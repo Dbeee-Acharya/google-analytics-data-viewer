@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "install:all": "pnpm -w install",
+    "build:all": "pnpm -w run build"
+  }
+}
