@@ -7,7 +7,9 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@google-analytics/data": "^5.2.1",
     "@hono/node-server": "^1.19.6",
+    "dotenv": "^17.2.3",
     "hono": "^4.10.7"
   },
   "devDependencies": {
