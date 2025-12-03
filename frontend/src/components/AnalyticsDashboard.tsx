@@ -25,7 +25,7 @@ export function AnalyticsDashboard({ siteId, themeColor }: AnalyticsDashboardPro
         return () => clearInterval(interval);
     }, []);
 
-    const { data: realtimeData, isLoading: isLoadingRealtime } = useQuery({
+    const { data: realtimeResponse, isLoading: isLoadingRealtime } = useQuery({
         queryKey: ["analytics", siteId, "realtime"],
         queryFn: () => fetchRealtimeData(siteId),
         refetchInterval: 10000, // Refetch every 10s
@@ -38,13 +38,10 @@ export function AnalyticsDashboard({ siteId, themeColor }: AnalyticsDashboardPro
         enabled: viewMode === "top-pages",
     });
 
-    const currentData = viewMode === "realtime" ? realtimeData : topPagesData;
+    const currentData = viewMode === "realtime" ? realtimeResponse?.data : topPagesData;
     const isLoading = viewMode === "realtime" ? isLoadingRealtime : isLoadingTopPages;
 
-    const totalUsers = realtimeData?.reduce(
-        (acc, page) => acc + parseInt(page.activeUsers || "0", 10),
-        0
-    );
+    const totalUsers = realtimeResponse?.totalActiveUsers || "0";
 
     // Filter ignored titles
     const ignoredTitles = config.ignoredTitles[siteId as keyof typeof config.ignoredTitles] || [];
@@ -121,13 +118,18 @@ export function AnalyticsDashboard({ siteId, themeColor }: AnalyticsDashboardPro
                                 )}
                             >
                                 <CardContent className="p-6 flex items-center justify-between">
-                                    <div className="flex-1 pr-6">
-                                        <h3 className="text-2xl font-bold text-slate-800 leading-tight mb-2 line-clamp-2">
-                                            {page.displayTitle}
-                                        </h3>
-                                        <p className="text-base text-slate-500 font-medium truncate">
-                                            {page.pagePath}
-                                        </p>
+                                    <div className="flex-1 pr-6 flex items-center gap-4">
+                                        <span className="text-4xl font-black text-slate-200/80 font-mono">
+                                            #{index + 1}
+                                        </span>
+                                        <div>
+                                            <h3 className="text-2xl font-bold text-slate-800 leading-tight mb-2 line-clamp-2">
+                                                {page.displayTitle}
+                                            </h3>
+                                            <p className="text-base text-slate-500 font-medium truncate">
+                                                {page.pagePath}
+                                            </p>
+                                        </div>
                                     </div>
                                     <div className="flex flex-col items-end">
                                         <Badge

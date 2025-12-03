@@ -4,11 +4,13 @@
 
 to build and run
 
-```pnpm i
+```
+pnpm i
 
 ```
 
-```pnpm build
+```
+pnpm build
 
 ```
 

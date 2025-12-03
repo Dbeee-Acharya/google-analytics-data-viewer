@@ -16,6 +16,12 @@ export const config = {
       propertyId: process.env.TKP_PROPERTY_ID,
     },
   },
+  redis: {
+    url: process.env.REDIS_URL,
+    host: process.env.REDIS_HOST || 'localhost',
+    port: parseInt(process.env.REDIS_PORT || '6379'),
+    password: process.env.REDIS_PASSWORD,
+  },
   port: parseInt(process.env.PORT || '3000'),
 };
 

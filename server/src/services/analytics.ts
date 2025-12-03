@@ -37,6 +37,22 @@ export class AnalyticsService {
         }
     }
 
+    async getRealtimeTotalActiveUsers(propertyId: string) {
+        try {
+            const [response] = await this.client.runRealtimeReport({
+                property: `properties/${propertyId}`,
+                metrics: [
+                    { name: 'activeUsers' },
+                ],
+            });
+
+            return response.rows?.[0]?.metricValues?.[0]?.value || "0";
+        } catch (error) {
+            console.error("Error fetching realtime total active users:", error);
+            throw error;
+        }
+    }
+
     async getTopPagesLast3Days(propertyId: string) {
         try {
             const [response] = await this.client.runReport({

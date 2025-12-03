@@ -4,17 +4,19 @@
 
 to build and run
 
-```pnpm i
+```
+pnpm i
 
 ```
 
-```pnpm build
+```
+pnpm build
 
 ```
 
 ---
 
-```pm2 start ecosystem.config.cjs --env production
+```
+pm2 start ecosystem.config.cjs --env production
 
 ```
-

@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "hono-backend",
+      name: "kmg-analytics-backend",
       script: "pnpm",
       args: "start",
       exec_mode: "cluster",
