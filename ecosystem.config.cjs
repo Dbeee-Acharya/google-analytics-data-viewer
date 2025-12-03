@@ -3,24 +3,6 @@ module.exports = {
 
   apps: [
     {
-      name: "analytics-frontend",
-      script: "pnpm",
-      args: "serve",
-      cwd: "./frontend",
-
-      exec_mode: "fork",
-      watch: false,
-      autorestart: true,
-      max_restarts: 10,
-      restart_delay: 2000,
-      max_memory_restart: "500M",
-
-      env: {
-        NODE_ENV: "production",
-      },
-    },
-
-    {
       name: "analytics-server",
       script: "pnpm",
       args: "start",
