@@ -18,18 +18,17 @@ export class AnalyticsService {
             const [response] = await this.client.runRealtimeReport({
                 property: `properties/${propertyId}`,
                 dimensions: [
-                    { name: 'pageTitle' },
-                    { name: 'unifiedScreenName' }, // unifiedScreenName is often used for page path/title in realtime
+                    { name: 'unifiedScreenName' },
                 ],
                 metrics: [
                     { name: 'activeUsers' },
                 ],
-                limit: 10,
+                limit: 20,
             });
 
             return response.rows?.map(row => ({
-                pageTitle: row.dimensionValues?.[0].value,
-                pagePath: row.dimensionValues?.[1].value,
+                pageTitle: row.dimensionValues?.[0].value, // unifiedScreenName acts as title/path
+                pagePath: row.dimensionValues?.[0].value,
                 activeUsers: row.metricValues?.[0].value,
             })) || [];
         } catch (error) {

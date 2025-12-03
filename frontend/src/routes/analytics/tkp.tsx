@@ -6,5 +6,5 @@ export const Route = createFileRoute('/analytics/tkp')({
 })
 
 function RouteComponent() {
-    return <AnalyticsDashboard siteId="tkp" themeColor="bg-slate-800" />
+    return <AnalyticsDashboard siteId="tkp" themeColor="bg-emerald-600" />
 }

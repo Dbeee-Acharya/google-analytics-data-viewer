@@ -1,22 +1,15 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchRealtimeData, fetchTopPagesData } from "@/lib/api";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import { config } from "@/config";
 
 interface AnalyticsDashboardProps {
     siteId: string;
-    themeColor: string; // e.g., "bg-blue-600"
+    themeColor: string; // e.g., "blue", "green"
 }
 
 type ViewMode = "realtime" | "top-pages";
@@ -53,82 +46,105 @@ export function AnalyticsDashboard({ siteId, themeColor }: AnalyticsDashboardPro
         0
     );
 
+    // Filter ignored titles
+    const ignoredTitles = config.ignoredTitles[siteId as keyof typeof config.ignoredTitles] || [];
+
+    const processedData = currentData?.map(page => ({
+        ...page,
+        displayTitle: page.pageTitle === '(not set)' ? 'Home' : page.pageTitle
+    }));
+
+    const filteredData = processedData?.filter(page =>
+        !ignoredTitles.includes(page.pageTitle) &&
+        !ignoredTitles.includes(page.displayTitle)
+    );
+
+    // Theme colors
+    const isBlue = themeColor.includes("blue");
+    const primaryColor = isBlue ? "bg-blue-600" : "bg-emerald-600";
+    const shadowColor = isBlue ? "shadow-blue-500/50" : "shadow-emerald-500/50";
+    const borderColor = isBlue ? "border-blue-200" : "border-emerald-200";
+    const badgeColor = isBlue ? "bg-blue-100 text-blue-800" : "bg-emerald-100 text-emerald-800";
+
     return (
-        <div className="min-h-screen bg-background p-8 font-sans">
-            <div className="mx-auto max-w-4xl space-y-8">
+        <div className="min-h-screen bg-slate-50 p-8 font-sans overflow-hidden">
+            <div className="w-full space-y-8">
                 {/* Header Section */}
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold tracking-tight capitalize">{siteId} Analytics</h1>
-                        <p className="text-muted-foreground">
+                <div className="flex items-center justify-between mb-12">
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-4">
+                            <h1 className="text-5xl font-extrabold tracking-tight capitalize text-slate-900">
+                                {siteId} Analytics
+                            </h1>
+                            {viewMode === "realtime" && (
+                                <span className="relative flex h-6 w-6">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-6 w-6 bg-red-600"></span>
+                                </span>
+                            )}
+                        </div>
+                        <p className="text-2xl text-slate-500 font-medium">
                             {viewMode === "realtime" ? "Realtime Active Users" : "Top Pages (Last 3 Days)"}
                         </p>
                     </div>
 
-                    <Card className={cn("w-48 border-none shadow-lg", themeColor, "text-white")}>
-                        <CardHeader className="pb-2">
-                            <CardTitle className="text-sm font-medium text-white/80">
-                                Total Active Users
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-4xl font-bold">
-                                {isLoadingRealtime ? <Skeleton className="h-10 w-20 bg-white/20" /> : totalUsers}
+                    <Card className={cn("w-auto min-w-[200px] border-none shadow-2xl transform hover:scale-105 transition-transform duration-300", primaryColor, shadowColor)}>
+                        <CardContent className="p-4 flex flex-row items-center justify-center gap-4">
+                            <div className="text-5xl font-black text-white tracking-tight">
+                                {isLoadingRealtime
+                                    ? <Skeleton className="h-12 w-24 bg-white/20" />
+                                    : totalUsers}
                             </div>
+
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Data List */}
-                <Card className="border shadow-sm">
-                    <CardHeader>
-                        <CardTitle>Top Pages</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[70%]">Page Title</TableHead>
-                                    <TableHead className="text-right">
-                                        {viewMode === "realtime" ? "Active Users" : "Views"}
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {isLoading ? (
-                                    Array.from({ length: 5 }).map((_, i) => (
-                                        <TableRow key={i}>
-                                            <TableCell><Skeleton className="h-4 w-[250px]" /></TableCell>
-                                            <TableCell className="text-right"><Skeleton className="h-4 w-[50px] ml-auto" /></TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : currentData?.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={2} className="text-center h-24 text-muted-foreground">
-                                            No data available
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    currentData?.map((page, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell className="font-medium">
-                                                <div className="flex flex-col">
-                                                    <span>{page.pageTitle === '(not set)' ? 'Home' : page.pageTitle}</span>
-                                                    <span className="text-xs text-muted-foreground">{page.pagePath}</span>
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <Badge variant="secondary" className="font-mono text-base">
-                                                    {viewMode === "realtime" ? page.activeUsers : page.views}
-                                                </Badge>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
+                <div className="grid gap-4">
+                    {isLoading ? (
+                        Array.from({ length: 5 }).map((_, i) => (
+                            <Skeleton key={i} className="h-24 w-full rounded-xl" />
+                        ))
+                    ) : filteredData?.length === 0 ? (
+                        <div className="text-center text-2xl text-slate-400 py-16 font-light">
+                            No data available
+                        </div>
+                    ) : (
+                        filteredData?.map((page, index) => (
+                            <Card
+                                key={index}
+                                className={cn(
+                                    "border-l-8 shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1",
+                                    borderColor,
+                                    shadowColor
                                 )}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
+                            >
+                                <CardContent className="p-6 flex items-center justify-between">
+                                    <div className="flex-1 pr-6">
+                                        <h3 className="text-2xl font-bold text-slate-800 leading-tight mb-2 line-clamp-2">
+                                            {page.displayTitle}
+                                        </h3>
+                                        <p className="text-base text-slate-500 font-medium truncate">
+                                            {page.pagePath}
+                                        </p>
+                                    </div>
+                                    <div className="flex flex-col items-end">
+                                        <Badge
+                                            variant="secondary"
+                                            className={cn("text-3xl px-5 py-2 rounded-full font-black", badgeColor)}
+                                        >
+                                            {viewMode === "realtime" ? page.activeUsers : page.views}
+                                        </Badge>
+                                        <span className="text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">
+                                            {viewMode === "realtime" ? "Active" : "Views"}
+                                        </span>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))
+                    )}
+                </div>
             </div>
         </div>
     );

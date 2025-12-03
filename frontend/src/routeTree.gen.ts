@@ -10,18 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as AnalyticsTkpRouteImport } from './routes/analytics/tkp'
 import { Route as AnalyticsEkantipurRouteImport } from './routes/analytics/ekantipur'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsTkpRoute = AnalyticsTkpRouteImport.update({
@@ -39,43 +33,30 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/analytics/ekantipur': typeof AnalyticsEkantipurRoute
   '/analytics/tkp': typeof AnalyticsTkpRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/analytics/ekantipur': typeof AnalyticsEkantipurRoute
   '/analytics/tkp': typeof AnalyticsTkpRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/analytics/ekantipur': typeof AnalyticsEkantipurRoute
   '/analytics/tkp': typeof AnalyticsTkpRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/analytics/ekantipur'
-    | '/analytics/tkp'
-    | '/demo/tanstack-query'
+  fullPaths: '/' | '/analytics/ekantipur' | '/analytics/tkp'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics/ekantipur' | '/analytics/tkp' | '/demo/tanstack-query'
-  id:
-    | '__root__'
-    | '/'
-    | '/analytics/ekantipur'
-    | '/analytics/tkp'
-    | '/demo/tanstack-query'
+  to: '/' | '/analytics/ekantipur' | '/analytics/tkp'
+  id: '__root__' | '/' | '/analytics/ekantipur' | '/analytics/tkp'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AnalyticsEkantipurRoute: typeof AnalyticsEkantipurRoute
   AnalyticsTkpRoute: typeof AnalyticsTkpRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,13 +66,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics/tkp': {
@@ -115,7 +89,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AnalyticsEkantipurRoute: AnalyticsEkantipurRoute,
   AnalyticsTkpRoute: AnalyticsTkpRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
